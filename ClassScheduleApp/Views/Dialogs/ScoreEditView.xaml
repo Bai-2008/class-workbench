@@ -1,0 +1,97 @@
+<UserControl x:Class="ClassScheduleApp.Views.Dialogs.ScoreEditView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <!-- 综测记录编辑内容：由 DialogShell 资源段里的隐式模板按 ViewModel 类型渲染 -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- 左：学生多选（带搜索） -->
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,18,0">
+            <TextBlock Text="选择学生（可多选）" FontWeight="Bold" Margin="0,0,0,6" />
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                <Button Content="全选" Command="{Binding SelectAllCommand}" Padding="10,2" ToolTip="勾选当前列表里所有可选学生" />
+                <Button Content="全不选" Command="{Binding SelectNoneCommand}" Padding="10,2" Margin="6,0,0,0" />
+            </StackPanel>
+            <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     Width="240"
+                     Margin="0,0,0,6"
+                     ToolTip="输入姓名或学号进行搜索" />
+            <TextBlock Text="{Binding SelectionText}" Foreground="{DynamicResource App.Brush.TextMuted}" Margin="0,0,0,6" />
+            <ListBox ItemsSource="{Binding VisibleStudents}"
+                     Height="260"
+                     Width="240"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <!-- 勾选状态单向显示、由命令驱动（勾选类控件点击不回写绑定源） -->
+                        <CheckBox IsChecked="{Binding IsSelected, Mode=OneWay}"
+                                  IsEnabled="{Binding IsEnabled}"
+                                  Command="{Binding ToggleSelectionCommand}"
+                                  Content="{Binding DisplayText}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+
+        <!-- 右：记录内容 -->
+        <StackPanel Grid.Row="0" Grid.Column="1">
+            <TextBlock Text="{Binding Semester, StringFormat=学期：{0}}" Foreground="{DynamicResource App.Brush.TextMuted}" Margin="0,0,0,10" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="类别" VerticalAlignment="Center" Margin="0,0,10,10" />
+                <ComboBox Grid.Row="0" Grid.Column="1" IsEditable="True"
+                          ItemsSource="{Binding CategoryOptions}"
+                          Text="{Binding Category, UpdateSourceTrigger=PropertyChanged}"
+                          Width="240" HorizontalAlignment="Left" Margin="0,0,0,10" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="分数" VerticalAlignment="Center" Margin="0,0,10,10" />
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         Text="{Binding ScoreText, UpdateSourceTrigger=PropertyChanged}"
+                         Width="240" HorizontalAlignment="Left" Margin="0,0,0,10"
+                         ToolTip="可为负，表示扣分" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="说明" VerticalAlignment="Center" Margin="0,0,10,10" />
+                <TextBox Grid.Row="2" Grid.Column="1"
+                         Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                         Width="240" HorizontalAlignment="Left" Margin="0,0,0,10" />
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="佐证" VerticalAlignment="Center" Margin="0,0,10,10" />
+                <TextBox Grid.Row="3" Grid.Column="1"
+                         Text="{Binding Evidence, UpdateSourceTrigger=PropertyChanged}"
+                         Width="240" HorizontalAlignment="Left" Margin="0,0,0,10" />
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="日期" VerticalAlignment="Center" Margin="0,0,10,0" />
+                <DatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding EntryDate}"
+                            Width="240" HorizontalAlignment="Left" />
+            </Grid>
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                   Text="{Binding Message}"
+                   TextWrapping="Wrap"
+                   MaxWidth="520"
+                   Foreground="{DynamicResource App.Brush.TextMuted}"
+                   Margin="0,12,0,0" />
+    </Grid>
+</UserControl>

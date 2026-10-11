@@ -1,0 +1,68 @@
+<Window x:Class="ClassScheduleApp.Views.CourseManageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="课程管理"
+        Height="520"
+        Width="900"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <Button Content="新增课程" Command="{Binding AddCourseCommand}" Padding="10,4" Margin="0,0,8,0" />
+            <Button Content="编辑课程" Command="{Binding EditCourseCommand}" Padding="10,4" Margin="0,0,8,0" />
+            <Button Content="关闭" Command="{Binding CloseCommand}" Padding="10,4" />
+            <!-- 全局破坏性操作：与常规按钮区隔，需键入确认词，执行前自动备份 -->
+            <Button Content="清空全部课表"
+                    Command="{Binding ClearAllSchedulesCommand}"
+                    Padding="10,4"
+                    Margin="28,0,0,0"
+                    FontWeight="Bold"
+                    ToolTip="删除全部关联、全部课程（含时段）与全部调整记录；学生与考勤记录保留。执行前自动备份，需键入「清空」确认。" />
+            <TextBlock Text="{Binding StatusMessage}"
+                       VerticalAlignment="Center"
+                       Margin="16,0,0,0"
+                       MaxWidth="420"
+                       TextTrimming="CharacterEllipsis"
+                       Foreground="{DynamicResource App.Brush.TextMuted}" />
+        </StackPanel>
+
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Courses}"
+                  SelectedItem="{Binding SelectedCourse, Mode=TwoWay}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  SelectionMode="Single"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="课程编号" Binding="{Binding CourseNo}" Width="100" />
+                <DataGridTextColumn Header="课程名" Binding="{Binding CourseName}" Width="2*" />
+                <DataGridTextColumn Header="任课老师" Binding="{Binding Teacher}" Width="*" />
+                <DataGridTextColumn Header="学分" Binding="{Binding Credit}" Width="70" />
+                <DataGridTextColumn Header="星期" Binding="{Binding WeekdayText}" SortMemberPath="DayOfWeek" Width="70" />
+                <DataGridTextColumn Header="节次" Binding="{Binding PeriodText}" SortMemberPath="StartPeriod" Width="90" />
+                <DataGridTextColumn Header="教室" Binding="{Binding Location}" Width="*" />
+                <DataGridTextColumn Header="学生" Binding="{Binding NoStudentLabel}" Width="70" />
+                <DataGridTemplateColumn Header="操作" Width="80">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="删除"
+                                    Padding="8,2"
+                                    Command="{Binding DataContext.DeleteCourseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

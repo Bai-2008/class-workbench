@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--
+        浅色主题：只提供调色板。
+        控件外观统一由 Themes/ControlStyles.xaml 提供（与深色共用同一套设计），
+        因此浅色与深色只是配色不同，布局、圆角、扁平化按钮、间距等完全一致。
+    -->
+    <SolidColorBrush x:Key="App.Brush.Window" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="App.Brush.Surface" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="App.Brush.SurfaceAlt" Color="#FFF7F7F8" />
+    <SolidColorBrush x:Key="App.Brush.Border" Color="#FFDDDDDF" />
+    <SolidColorBrush x:Key="App.Brush.BorderStrong" Color="#FFC9C9CE" />
+    <SolidColorBrush x:Key="App.Brush.Text" Color="#FF1F1F1F" />
+    <SolidColorBrush x:Key="App.Brush.TextMuted" Color="#FF6E6E73" />
+    <SolidColorBrush x:Key="App.Brush.AccentSurface" Color="#FFFFF3CD" />
+    <SolidColorBrush x:Key="App.Brush.AccentText" Color="#FF9A6B00" />
+    <SolidColorBrush x:Key="App.Brush.CourseSurface" Color="#FFEDF4FD" />
+    <SolidColorBrush x:Key="App.Brush.CourseBorder" Color="#FFA9C7EC" />
+    <SolidColorBrush x:Key="App.Brush.ConflictBorder" Color="#FFD9A441" />
+    <SolidColorBrush x:Key="App.Brush.WarningSurface" Color="#FFFFF6E5" />
+    <SolidColorBrush x:Key="App.Brush.WarningBorder" Color="#FFE0C080" />
+    <SolidColorBrush x:Key="App.Brush.WarningText" Color="#FF8A5A00" />
+    <SolidColorBrush x:Key="App.Brush.ErrorText" Color="#FFCF222E" />
+    <SolidColorBrush x:Key="App.Brush.SeparatorSurface" Color="#FFF3F3F4" />
+    <SolidColorBrush x:Key="App.Brush.TagSurface" Color="#FFEDEDEF" />
+    <SolidColorBrush x:Key="App.Brush.PositiveText" Color="#FF1A7F37" />
+    <SolidColorBrush x:Key="App.Brush.FreeSurface" Color="#FFD9EFDE" />
+    <SolidColorBrush x:Key="App.Brush.SelectedBorder" Color="#FF2D7DD2" />
+    <SolidColorBrush x:Key="App.Brush.ScrollThumb" Color="#FFC4C4C9" />
+</ResourceDictionary>

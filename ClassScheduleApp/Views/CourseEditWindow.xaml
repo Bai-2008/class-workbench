@@ -1,0 +1,106 @@
+<Window x:Class="ClassScheduleApp.Views.CourseEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="{Binding Title}"
+        Width="820"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="课程编号" VerticalAlignment="Center" Margin="0,0,8,8" />
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBox Text="{Binding CourseNo, UpdateSourceTrigger=PropertyChanged}" Width="200" />
+            <TextBlock Text="选填；填写时不能与其它课程重复" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource App.Brush.TextMuted}" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="课程名 *" VerticalAlignment="Center" Margin="0,0,8,8" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CourseName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="任课老师 *" VerticalAlignment="Center" Margin="0,0,8,8" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Teacher, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="学分" VerticalAlignment="Center" Margin="0,0,8,8" />
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBox Text="{Binding CreditText, UpdateSourceTrigger=PropertyChanged}" Width="200" />
+            <TextBlock Text="选填；留空表示不填，例如 3 或 3.5" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource App.Brush.TextMuted}" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="上课时间" VerticalAlignment="Top" Margin="0,4,8,8" />
+        <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,0,0,8">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                <Button Content="添加时段" Command="{Binding AddScheduleCommand}" Padding="10,2" />
+                <TextBlock Text="可增删多行，支持一周多次" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource App.Brush.TextMuted}" />
+            </StackPanel>
+
+            <ItemsControl ItemsSource="{Binding Schedules}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{DynamicResource App.Brush.Border}" BorderThickness="1" CornerRadius="3" Padding="8" Margin="0,0,0,6">
+                            <StackPanel>
+                                <TextBlock Text="{Binding RowTitle}" FontWeight="Bold" Margin="0,0,0,6" />
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <TextBlock Text="星期" VerticalAlignment="Center" Margin="0,0,4,0" />
+                                    <ComboBox SelectedIndex="{Binding DayIndex}" Width="70">
+                                        <ComboBoxItem Content="周一" />
+                                        <ComboBoxItem Content="周二" />
+                                        <ComboBoxItem Content="周三" />
+                                        <ComboBoxItem Content="周四" />
+                                        <ComboBoxItem Content="周五" />
+                                        <ComboBoxItem Content="周六" />
+                                        <ComboBoxItem Content="周日" />
+                                    </ComboBox>
+                                    <TextBlock Text="节次" VerticalAlignment="Center" Margin="10,0,4,0" />
+                                    <ComboBox ItemsSource="{Binding PeriodOptions}" SelectedItem="{Binding StartPeriod}" Width="56" />
+                                    <TextBlock Text="—" VerticalAlignment="Center" Margin="6,0" />
+                                    <ComboBox ItemsSource="{Binding PeriodOptions}" SelectedItem="{Binding EndPeriod}" Width="56" />
+                                    <TextBlock Text="周次" VerticalAlignment="Center" Margin="10,0,4,0" />
+                                    <ComboBox ItemsSource="{Binding WeekOptions}" SelectedItem="{Binding StartWeek}" Width="56" />
+                                    <TextBlock Text="—" VerticalAlignment="Center" Margin="6,0" />
+                                    <ComboBox ItemsSource="{Binding WeekOptions}" SelectedItem="{Binding EndWeek}" Width="56" />
+                                    <TextBlock Text="周" VerticalAlignment="Center" Margin="6,0,0,0" />
+                                    <TextBlock Text="单双周" VerticalAlignment="Center" Margin="10,0,4,0" />
+                                    <ComboBox ItemsSource="{Binding ParityOptions}"
+                                              SelectedItem="{Binding SelectedParity}"
+                                              Width="72"
+                                              ToolTip="每周 = 不做奇偶过滤；单/双周以学期教学周序号为准（第 1、3、5… 周为单周）" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="教室" VerticalAlignment="Center" Margin="0,0,4,0" />
+                                    <TextBox Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}" Width="220" />
+                                    <Button Content="删除本行"
+                                            Command="{Binding DataContext.RemoveScheduleCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"
+                                            Padding="10,2"
+                                            Margin="10,0,0,0" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="没有时段也可以保存（该课程暂时不上课）" Foreground="{DynamicResource App.Brush.TextMuted}" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="保存" Command="{Binding SaveCommand}" Width="88" Padding="0,4" Margin="0,8,8,0" />
+            <Button Content="取消" Command="{Binding CancelCommand}" Width="88" Padding="0,4" Margin="0,8,0,0" />
+        </StackPanel>
+    </Grid>
+</Window>

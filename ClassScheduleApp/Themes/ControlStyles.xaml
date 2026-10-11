@@ -1,0 +1,484 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--
+    控件外观（深浅共用）：按钮/下拉/日期框/日历/表格/标签页/滚动条的统一设计。
+    只引用 App.Brush.* 调色板键，切换主题时自动变色，两套主题外观完全一致、仅配色不同。
+-->
+
+    <!-- 文本 -->
+    <Style TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+    </Style>
+    <Style TargetType="Label">
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+    </Style>
+    <Style TargetType="ToolTip">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.SurfaceAlt}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource App.Brush.Border}" />
+    </Style>
+
+    <!-- 勾选类与单选框：只改文字色，方框沿用系统绘制 -->
+    <Style TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+    </Style>
+    <Style TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+    </Style>
+
+    <!-- 按钮：默认模板带浅色渐变 chrome，改用扁平深色模板 -->
+    <Style TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.SurfaceAlt}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource App.Brush.BorderStrong}" />
+        <Setter Property="Padding" Value="8,2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Chrome"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource App.Brush.TagSurface}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource App.Brush.BorderStrong}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="RepeatButton">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.SurfaceAlt}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+    </Style>
+
+    <!-- 输入类（ComboBox / ComboBoxItem / DatePicker 见下方自绘模板，此处不重复定义） -->
+    <Style TargetType="TextBox">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.SurfaceAlt}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource App.Brush.BorderStrong}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource App.Brush.Text}" />
+    </Style>
+
+    <!-- 列表 -->
+    <Style TargetType="ListBox">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.Surface}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource App.Brush.Border}" />
+    </Style>
+    <Style TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+    </Style>
+
+    <!-- 表格 -->
+    <Style TargetType="DataGrid">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.Surface}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="RowBackground" Value="{DynamicResource App.Brush.Surface}" />
+        <Setter Property="AlternatingRowBackground" Value="{DynamicResource App.Brush.SurfaceAlt}" />
+        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource App.Brush.Border}" />
+        <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource App.Brush.Border}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource App.Brush.Border}" />
+    </Style>
+    <Style TargetType="DataGridColumnHeader">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.SurfaceAlt}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource App.Brush.Border}" />
+        <Setter Property="SeparatorBrush" Value="{DynamicResource App.Brush.Border}" />
+    </Style>
+    <Style TargetType="DataGridRow">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.Surface}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+    </Style>
+    <Style TargetType="DataGridCell">
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource App.Brush.Border}" />
+    </Style>
+
+    <!-- 其他 -->
+    <Style TargetType="GridSplitter">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.Border}" />
+    </Style>
+
+    <!-- 下拉框：系统默认模板内嵌浅色 chrome，改成自绘深色模板 -->
+    <Style TargetType="ComboBox">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.SurfaceAlt}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource App.Brush.BorderStrong}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton Focusable="False"
+                                      ClickMode="Press"
+                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border Background="{DynamicResource App.Brush.SurfaceAlt}"
+                                            BorderBrush="{DynamicResource App.Brush.BorderStrong}"
+                                            BorderThickness="1"
+                                            CornerRadius="3">
+                                        <Path HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,8,0"
+                                              Fill="{DynamicResource App.Brush.TextMuted}"
+                                              Data="M 0 0 L 4 4 L 8 0 Z" />
+                                    </Border>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+                        <ContentPresenter IsHitTestVisible="False"
+                                          Margin="8,3,24,3"
+                                          VerticalAlignment="Center"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" />
+                        <Popup x:Name="PART_Popup"
+                               AllowsTransparency="True"
+                               Placement="Bottom"
+                               Focusable="False"
+                               PopupAnimation="Slide"
+                               IsOpen="{TemplateBinding IsDropDownOpen}">
+                            <Border MinWidth="{TemplateBinding ActualWidth}"
+                                    MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                    Background="{DynamicResource App.Brush.Surface}"
+                                    BorderBrush="{DynamicResource App.Brush.BorderStrong}"
+                                    BorderThickness="1">
+                                <ScrollViewer>
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border x:Name="Chrome" Background="Transparent" Padding="8,4">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource App.Brush.TagSurface}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource App.Brush.BorderStrong}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 日期框：同样需要自绘（内嵌文本框与日历按钮是模板内元素，隐式样式管不到） -->
+    <Style TargetType="DatePicker">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.SurfaceAlt}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <!-- 日历弹层的样式：在样式 Setter 上挂 CalendarStyle 最可靠（模板内引用会静默失效） -->
+        <Setter Property="CalendarStyle" Value="{DynamicResource App.CalendarStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DatePicker">
+                    <Border Background="{DynamicResource App.Brush.SurfaceAlt}"
+                            BorderBrush="{DynamicResource App.Brush.BorderStrong}"
+                            BorderThickness="1"
+                            CornerRadius="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <DatePickerTextBox x:Name="PART_TextBox"
+                                               Grid.Column="0"
+                                               Background="Transparent"
+                                               Foreground="{DynamicResource App.Brush.Text}"
+                                               BorderThickness="0"
+                                               Padding="4,2"
+                                               VerticalContentAlignment="Center" />
+                            <Button x:Name="PART_Button"
+                                    Grid.Column="1"
+                                    Width="22"
+                                    Margin="2"
+                                    Padding="0"
+                                    Focusable="False">
+                                <TextBlock Text="▾" FontSize="9" Foreground="{DynamicResource App.Brush.TextMuted}" />
+                            </Button>
+                            <Popup x:Name="PART_Popup"
+                                   PlacementTarget="{Binding ElementName=PART_TextBox}"
+                                   Placement="Bottom"
+                                   StaysOpen="False"
+                                   AllowsTransparency="True"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}">
+                                <Border Background="{DynamicResource App.Brush.Surface}"
+                                        BorderBrush="{DynamicResource App.Brush.BorderStrong}"
+                                        BorderThickness="1"
+                                        Padding="2">
+                                    <!-- 模板内的资源引用必须用 DynamicResource；
+                                         日历的部件样式用内联属性直接挂（走 Style 查找在模板里不可靠） -->
+                                    <Calendar x:Name="PART_Calendar"
+                                              Background="{DynamicResource App.Brush.Surface}"
+                                              Foreground="{DynamicResource App.Brush.Text}"
+                                              CalendarItemStyle="{DynamicResource App.CalendarItemStyle}"
+                                              CalendarDayButtonStyle="{DynamicResource App.CalendarDayButtonStyle}"
+                                              CalendarButtonStyle="{DynamicResource App.CalendarButtonStyle}" />
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 标签页（考勤页用到） -->
+    <Style TargetType="TabControl">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource App.Brush.Border}" />
+    </Style>
+    <Style TargetType="TabItem">
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Border x:Name="Chrome"
+                            Background="{DynamicResource App.Brush.SurfaceAlt}"
+                            BorderBrush="{DynamicResource App.Brush.BorderStrong}"
+                            BorderThickness="1"
+                            CornerRadius="4,4,0,0"
+                            Margin="0,0,4,0"
+                            Padding="12,4">
+                        <ContentPresenter ContentSource="Header" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource App.Brush.Surface}" />
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource App.Brush.SelectedBorder}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        日历弹层（DatePicker 下拉）：默认模板是浅色系统外观。
+        注意：日历是 DatePicker 模板内的元素，隐式样式对模板内元素无效，
+        因此这里用带 Key 的样式，并通过 Calendar 的 CalendarItemStyle /
+        CalendarDayButtonStyle / CalendarButtonStyle 显式挂到各部件上。
+    -->
+    <Style x:Key="App.CalendarItemStyle" TargetType="CalendarItem">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.Surface}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarItem">
+                    <Border Background="{DynamicResource App.Brush.Surface}"
+                            BorderBrush="{DynamicResource App.Brush.Border}"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            Padding="6">
+                        <Grid x:Name="PART_Root">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="PART_PreviousButton"
+                                        Grid.Column="0"
+                                        Width="26"
+                                        Padding="0"
+                                        Content="◀"
+                                        FontSize="9" />
+                                <Button x:Name="PART_HeaderButton"
+                                        Grid.Column="1"
+                                        Padding="4,2"
+                                        FontWeight="Bold" />
+                                <Button x:Name="PART_NextButton"
+                                        Grid.Column="2"
+                                        Width="26"
+                                        Padding="0"
+                                        Content="▶"
+                                        FontSize="9" />
+                            </Grid>
+                            <Grid x:Name="PART_MonthView" Grid.Row="1" Visibility="Visible">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                            </Grid>
+                            <Grid x:Name="PART_YearView" Grid.Row="1" Visibility="Hidden">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="App.CalendarDayButtonStyle" TargetType="CalendarDayButton">
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="MinWidth" Value="24" />
+        <Setter Property="MinHeight" Value="22" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarDayButton">
+                    <Border x:Name="Chrome"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            Margin="1"
+                            Padding="2">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource App.Brush.TagSurface}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource App.Brush.SelectedBorder}" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Trigger>
+                        <Trigger Property="IsToday" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource App.Brush.AccentText}" />
+                        </Trigger>
+                        <Trigger Property="IsInactive" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource App.Brush.TextMuted}" />
+                            <Setter Property="Opacity" Value="0.6" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.3" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="App.CalendarButtonStyle" TargetType="CalendarButton">
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="MinWidth" Value="38" />
+        <Setter Property="MinHeight" Value="30" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CalendarButton">
+                    <Border x:Name="Chrome"
+                            Background="Transparent"
+                            CornerRadius="3"
+                            Margin="1"
+                            Padding="2">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource App.Brush.TagSurface}" />
+                        </Trigger>
+                        <Trigger Property="IsInactive" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource App.Brush.TextMuted}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 日历本体：把三个部件样式一次性挂上；再给一份隐式样式，独立使用的 Calendar 也能变深色 -->
+    <Style x:Key="App.CalendarStyle" TargetType="Calendar">
+        <Setter Property="Background" Value="{DynamicResource App.Brush.Surface}" />
+        <Setter Property="Foreground" Value="{DynamicResource App.Brush.Text}" />
+        <Setter Property="CalendarItemStyle" Value="{StaticResource App.CalendarItemStyle}" />
+        <Setter Property="CalendarDayButtonStyle" Value="{StaticResource App.CalendarDayButtonStyle}" />
+        <Setter Property="CalendarButtonStyle" Value="{StaticResource App.CalendarButtonStyle}" />
+    </Style>
+    <Style TargetType="Calendar" BasedOn="{StaticResource App.CalendarStyle}" />
+
+    <!-- 滚动条：默认是浅色系统外观，换成细的深色滑块 -->
+    <Style TargetType="ScrollBar">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Width" Value="10" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="Transparent">
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                            <Track.Thumb>
+                                <Thumb>
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border Background="{DynamicResource App.Brush.BorderStrong}" CornerRadius="5" Margin="2,0" />
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False" />
+                            </Track.IncreaseRepeatButton>
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False" />
+                            </Track.DecreaseRepeatButton>
+                        </Track>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Orientation" Value="Horizontal">
+                            <Setter Property="Height" Value="10" />
+                            <Setter Property="Width" Value="Auto" />
+                            <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="False" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

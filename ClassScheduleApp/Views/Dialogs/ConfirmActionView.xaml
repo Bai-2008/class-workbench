@@ -1,0 +1,49 @@
+<UserControl x:Class="ClassScheduleApp.Views.Dialogs.ConfirmActionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ClassScheduleApp.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DataContext="{d:DesignInstance Type=vm:ConfirmActionViewModel}"
+             mc:Ignorable="d">
+    <StackPanel Margin="16" MinWidth="380">
+        <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="Bold" />
+        <TextBlock Text="{Binding Subject}" Margin="0,6,0,0" TextWrapping="Wrap" />
+
+        <TextBlock Text="将删除 / 改动：" FontWeight="Bold" Margin="0,12,0,4" />
+        <ItemsControl ItemsSource="{Binding ImpactLines}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Margin="0,2,0,0" TextWrapping="Wrap" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <TextBlock Text="将保留：" FontWeight="Bold" Margin="0,12,0,4"
+                   Visibility="{Binding RetainedLines.Count, Converter={x:Static vm:CountToVisibilityConverter.Instance}}" />
+        <ItemsControl ItemsSource="{Binding RetainedLines}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Margin="0,2,0,0"
+                               Foreground="{DynamicResource App.Brush.TextMuted}" TextWrapping="Wrap" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <TextBlock Text="{Binding Notice}"
+                   Margin="0,12,0,0" TextWrapping="Wrap"
+                   Foreground="{DynamicResource App.Brush.WarningText}"
+                   Visibility="{Binding Notice, Converter={x:Static vm:TextToVisibilityConverter.Instance}}" />
+
+        <StackPanel Margin="0,12,0,0"
+                    Visibility="{Binding RequireTypedWord, Converter={x:Static vm:BoolToVisibilityConverter.Instance}}">
+            <TextBlock Text="{Binding ConfirmPrompt}" TextWrapping="Wrap" />
+            <TextBox Text="{Binding TypedText, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,0" Width="200" HorizontalAlignment="Left" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="确认执行" Command="{Binding ConfirmCommand}" Padding="12,4" Margin="0,0,8,0" />
+            <Button Content="取消" Command="{Binding CancelCommand}" Padding="12,4" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

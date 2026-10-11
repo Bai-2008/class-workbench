@@ -1,0 +1,143 @@
+<UserControl x:Class="ClassScheduleApp.Views.ScheduleImportPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ClassScheduleApp.ViewModels"
+             d:DataContext="{d:DesignInstance Type=vm:ScheduleImportViewModel}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="16">
+            <TextBlock Text="课表导入" FontSize="18" FontWeight="Bold" />
+            <TextBlock Text="解析教务系统导出的课表（PDF / 文本），确认导入即覆盖该生本学期课表。全程本地解析，不联网。"
+                       Foreground="{DynamicResource App.Brush.TextMuted}"
+                       TextWrapping="Wrap"
+                       Margin="0,4,0,0" />
+
+            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                <TextBlock Text="学期" VerticalAlignment="Center" Margin="0,0,6,0" />
+                <ComboBox ItemsSource="{Binding Semesters}" SelectedItem="{Binding SelectedSemester}" Width="160" />
+                <TextBlock Text="（覆盖范围限该学期）" VerticalAlignment="Center" Margin="8,0,0,0"
+                           Foreground="{DynamicResource App.Brush.TextMuted}" />
+            </StackPanel>
+
+            <!-- ===== 单个导入 ===== -->
+            <TextBlock Text="单个导入" FontSize="15" FontWeight="Bold" Margin="0,18,0,6" />
+            <TextBlock Text="把课表内容粘贴到下面，或直接选择文件；解析后可在预览里逐行剔除。"
+                       Foreground="{DynamicResource App.Brush.TextMuted}" TextWrapping="Wrap" />
+            <TextBox Text="{Binding SingleText, UpdateSourceTrigger=PropertyChanged}"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     MinHeight="80"
+                     MaxHeight="140"
+                     VerticalScrollBarVisibility="Auto"
+                     Margin="0,6,0,0" />
+            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                <Button Content="解析预览" Command="{Binding ParseTextCommand}" Margin="0,0,8,0" />
+                <Button Content="选择文件…" Command="{Binding PickSingleFileCommand}" />
+            </StackPanel>
+
+            <DataGrid ItemsSource="{Binding SingleEntries}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      HeadersVisibility="Column"
+                      MaxHeight="240"
+                      Margin="0,8,0,0">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="导入" Width="50">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsIncluded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="星期" Binding="{Binding WeekdayText}" Width="60" />
+                    <DataGridTextColumn Header="节次" Binding="{Binding PeriodText}" Width="70" />
+                    <DataGridTextColumn Header="周次" Binding="{Binding WeekText}" Width="110" />
+                    <DataGridTextColumn Header="课程" Binding="{Binding CourseName}" Width="2*" />
+                    <DataGridTextColumn Header="教师" Binding="{Binding Teacher}" Width="*" />
+                    <DataGridTextColumn Header="教室" Binding="{Binding Location}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                <TextBlock Text="学生" VerticalAlignment="Center" Margin="0,0,6,0" />
+                <ComboBox ItemsSource="{Binding SingleCandidates}" SelectedItem="{Binding SingleStudent}" Width="220">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Content="确认导入" Command="{Binding ConfirmSingleCommand}" Margin="8,0,0,0" />
+            </StackPanel>
+            <TextBlock Text="{Binding SingleStatus}" TextWrapping="Wrap" Margin="0,6,0,0"
+                       Foreground="{DynamicResource App.Brush.TextMuted}" />
+
+            <!-- ===== 批量导入 ===== -->
+            <TextBlock Text="批量导入" FontSize="15" FontWeight="Bold" Margin="0,20,0,6" />
+            <TextBlock Text="选择多个文件：第一步核对清单（可改绑学生、剔除文件），第二步全部导入；每份文件独立事务，失败不影响已完成的文件。同一学生的多份文件以最后一份为准。"
+                       Foreground="{DynamicResource App.Brush.TextMuted}" TextWrapping="Wrap" />
+            <Button Content="选择多个文件…" Command="{Binding PickFilesCommand}" Margin="0,8,0,0" HorizontalAlignment="Left" />
+
+            <DataGrid ItemsSource="{Binding BatchFiles}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      HeadersVisibility="Column"
+                      MaxHeight="260"
+                      Margin="0,8,0,0">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="导入" Width="50">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsIncluded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="文件名" Binding="{Binding FileName}" Width="2*" />
+                    <DataGridTemplateColumn Header="识别学生" Width="200">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding Candidates}"
+                                          SelectedItem="{Binding SelectedStudent}"
+                                          DisplayMemberPath="Name" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="状态" Binding="{Binding MatchText}" Width="110" />
+                    <DataGridTextColumn Header="课程数" Binding="{Binding CourseCount}" Width="70" />
+                    <DataGridTextColumn Header="异常行" Binding="{Binding SkipCount}" Width="70" />
+                    <DataGridTextColumn Header="备注" Binding="{Binding NoteText}" Width="2*" />
+                    <DataGridTextColumn Header="多份文件" Binding="{Binding LastOneNote}" Width="2*" />
+                    <DataGridTemplateColumn Header="操作" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="移除"
+                                        Command="{Binding DataContext.RemoveBatchFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                <Button Content="全部导入" Command="{Binding ImportAllCommand}" Margin="0,0,8,0" />
+            </StackPanel>
+            <TextBlock Text="{Binding BatchStatus}" TextWrapping="Wrap" Margin="0,6,0,0"
+                       Foreground="{DynamicResource App.Brush.TextMuted}" />
+
+            <!-- ===== 报告 ===== -->
+            <TextBlock Text="导入报告" FontSize="15" FontWeight="Bold" Margin="0,20,0,6" />
+            <Border BorderThickness="1" BorderBrush="{DynamicResource App.Brush.Border}" Margin="0,0,0,16">
+                <TextBlock Text="{Binding ReportText}"
+                           TextWrapping="Wrap"
+                           Padding="8"
+                           MinHeight="80"
+                           Foreground="{DynamicResource App.Brush.Text}" />
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

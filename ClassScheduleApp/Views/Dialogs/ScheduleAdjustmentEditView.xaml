@@ -1,0 +1,132 @@
+<UserControl x:Class="ClassScheduleApp.Views.Dialogs.ScheduleAdjustmentEditView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <!-- 调整弹窗：类型下拉联动表单（停课/补课 → 课程+日期+节次；放假 → 日期区间；调休 → 日期+上周几的课；调课 → 原时段+新时段） -->
+    <StackPanel MinWidth="420">
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock Text="类型" VerticalAlignment="Center" Width="90" />
+            <ComboBox ItemsSource="{Binding KindOptions}"
+                      DisplayMemberPath="Text"
+                      SelectedItem="{Binding SelectedKind}"
+                      MinWidth="180" />
+        </StackPanel>
+
+        <!-- 课程（停课/补课/调课） -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ShowCourse}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <TextBlock Text="课程" VerticalAlignment="Center" Width="90" />
+            <ComboBox ItemsSource="{Binding Courses}"
+                      DisplayMemberPath="DisplayText"
+                      SelectedItem="{Binding SelectedCourse}"
+                      MinWidth="280" />
+        </StackPanel>
+
+        <!-- 第一个日期 -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock Text="{Binding FirstDateLabel}" VerticalAlignment="Center" Width="90" />
+            <DatePicker SelectedDate="{Binding AffectedDate}" Width="160" />
+        </StackPanel>
+
+        <!-- 第二个日期（放假结束日 / 调课新课日期） -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ShowSecondDate}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <TextBlock Text="{Binding SecondDateLabel}" VerticalAlignment="Center" Width="90" />
+            <DatePicker SelectedDate="{Binding SecondDate}" Width="160" />
+        </StackPanel>
+
+        <!-- 节次起止（停课/补课/调课原时段） -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ShowPeriod}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <TextBlock Text="节次" VerticalAlignment="Center" Width="90" />
+            <ComboBox ItemsSource="{Binding PeriodOptions}" SelectedItem="{Binding StartPeriod}" Width="70" />
+            <TextBlock Text="—" VerticalAlignment="Center" Margin="6,0" />
+            <ComboBox ItemsSource="{Binding PeriodOptions}" SelectedItem="{Binding EndPeriod}" Width="70" />
+            <TextBlock Text="（含起止）" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource App.Brush.TextMuted}" />
+        </StackPanel>
+
+        <!-- 调课：新时段节次 -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ShowNewPeriod}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <TextBlock Text="新节次" VerticalAlignment="Center" Width="90" />
+            <ComboBox ItemsSource="{Binding PeriodOptions}" SelectedItem="{Binding NewStartPeriod}" Width="70" />
+            <TextBlock Text="—" VerticalAlignment="Center" Margin="6,0" />
+            <ComboBox ItemsSource="{Binding PeriodOptions}" SelectedItem="{Binding NewEndPeriod}" Width="70" />
+        </StackPanel>
+
+        <!-- 调休：该日按周几的课表上课 -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ShowSwapWeekday}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <TextBlock Text="上周几的课" VerticalAlignment="Center" Width="90" />
+            <ComboBox ItemsSource="{Binding WeekdayOptions}"
+                      DisplayMemberPath="Value"
+                      SelectedValuePath="Key"
+                      SelectedValue="{Binding FollowWeekday}"
+                      Width="120" />
+        </StackPanel>
+
+        <!-- 教室（补课/调课新时段） -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ShowNewLocation}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <TextBlock Text="教室" VerticalAlignment="Center" Width="90" />
+            <TextBox Text="{Binding NewLocation, UpdateSourceTrigger=PropertyChanged}" Width="160" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock Text="备注" VerticalAlignment="Center" Width="90" />
+            <TextBox Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" Width="280" />
+        </StackPanel>
+
+        <TextBlock Text="{Binding ErrorMessage}" TextWrapping="Wrap" Foreground="{DynamicResource App.Brush.ErrorText}" Margin="90,0,0,0" />
+    </StackPanel>
+</UserControl>

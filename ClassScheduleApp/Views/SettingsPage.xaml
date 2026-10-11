@@ -1,0 +1,213 @@
+<UserControl x:Class="ClassScheduleApp.Views.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <!--
+        设置页：所有区块放进一个纵向滚动容器。
+        早期用 Grid 行叠加时，固定高度的区块多起来会把「模块显示」那一行挤成 0 高，
+        导致标题重叠、内容看不全，故改为单一 StackPanel + 外层滚动。
+    -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,0">
+        <StackPanel>
+            <!-- 模块显示 -->
+            <TextBlock Text="模块显示" FontWeight="Bold" />
+            <ItemsControl ItemsSource="{Binding Modules}" Margin="0,4,0,0">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox Content="{Binding DisplayName}"
+                                  IsChecked="{Binding IsVisible, Mode=TwoWay}"
+                                  Margin="0,6" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Button Content="恢复默认"
+                    Command="{Binding RestoreDefaultsCommand}"
+                    HorizontalAlignment="Left"
+                    Padding="14,4"
+                    Margin="0,12,0,0" />
+            <TextBlock Text="设置即时生效；新版本新增的功能默认显示。"
+                       TextWrapping="Wrap"
+                       Margin="0,10,0,0"
+                       Foreground="{DynamicResource App.Brush.TextMuted}" />
+
+            <!-- 数据备份 -->
+            <StackPanel Margin="0,24,0,8">
+                <TextBlock Text="数据备份" FontWeight="Bold" />
+                <TextBlock Text="备份包含全部数据与设置，建议每周一次"
+                           TextWrapping="Wrap"
+                           Margin="0,6,0,0"
+                           Foreground="{DynamicResource App.Brush.TextMuted}" />
+                <TextBlock Text="{Binding BackupStatusMessage}"
+                           TextWrapping="Wrap"
+                           Margin="0,10,0,0"
+                           Foreground="{DynamicResource App.Brush.TextMuted}" />
+                <Button Content="立即备份数据"
+                        Command="{Binding BackupDataCommand}"
+                        HorizontalAlignment="Left"
+                        Padding="14,4"
+                        Margin="0,10,0,0" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button Content="刷新列表" Command="{Binding ReloadBackupsCommand}" Padding="14,4" Margin="0,0,8,0" />
+                    <Button Content="恢复所选"
+                            Command="{Binding RestoreBackupCommand}"
+                            Padding="14,4"
+                            Margin="0,0,8,0"
+                            ToolTip="需键入「恢复」确认；恢复前会自动备份当前状态（pre-restore），可再次回退" />
+                    <Button Content="删除所选" Command="{Binding DeleteBackupCommand}" Padding="14,4" />
+                </StackPanel>
+
+                <DataGrid ItemsSource="{Binding Backups}"
+                          SelectedItem="{Binding SelectedBackup}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          SelectionMode="Single"
+                          MaxHeight="220"
+                          Margin="0,10,0,0"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="备份时间" Binding="{Binding CreatedAtText}" Width="160" />
+                        <DataGridTextColumn Header="来源" Binding="{Binding ReasonText}" Width="120" />
+                        <DataGridTextColumn Header="大小" Binding="{Binding SizeText}" Width="90" />
+                        <DataGridTextColumn Header="名称" Binding="{Binding Name}" Width="*" />
+                        <DataGridTemplateColumn Header="操作" Width="90">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="恢复"
+                                            Padding="10,2"
+                                            Command="{Binding DataContext.RestoreBackupCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="恢复这一份备份（需键入「恢复」确认）" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
+            <!-- 学期设置 -->
+            <StackPanel Margin="0,24,0,8">
+                <TextBlock Text="学期设置" FontWeight="Bold" />
+                <WrapPanel Margin="0,8,0,0">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,14,6">
+                        <TextBlock Text="学期" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <ComboBox ItemsSource="{Binding SemesterOptions}"
+                                  SelectedItem="{Binding SelectedSemester}"
+                                  MinWidth="130" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,14,6">
+                        <TextBlock Text="起始日（第 1 周周一）" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <DatePicker SelectedDate="{Binding SemesterStartDate}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,14,6">
+                        <TextBlock Text="总周数" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBox Text="{Binding WeekCountText, UpdateSourceTrigger=PropertyChanged}" Width="60" />
+                    </StackPanel>
+                    <Button Content="保存学期设置"
+                            Command="{Binding SaveSemesterCommand}"
+                            Padding="12,4"
+                            Margin="0,0,14,6" />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,14,6">
+                        <TextBlock Text="新增学期" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBox Text="{Binding NewSemesterName, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="130"
+                                 ToolTip="学期名，例如 2027-2028-1" />
+                        <Button Content="新增"
+                                Command="{Binding AddSemesterCommand}"
+                                Padding="12,4"
+                                Margin="6,0,0,0" />
+                    </StackPanel>
+                    <Button Content="删除本学期"
+                            Command="{Binding DeleteSemesterCommand}"
+                            Padding="12,4"
+                            Margin="0,0,0,6"
+                            ToolTip="删除当前选中的学期设置；若该学期还有选课或调休补课记录，会先提示再确认，并在删除前自动备份" />
+                </WrapPanel>
+                <TextBlock Text="{Binding SemesterHint}"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource App.Brush.TextMuted}"
+                           Margin="0,4,0,0" />
+                <TextBlock Text="{Binding SemesterStatusMessage}"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource App.Brush.TextMuted}"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+
+            <!-- 作息时间（节数可自由设置） -->
+            <StackPanel Margin="0,16,0,8">
+                <TextBlock Text="作息时间" FontWeight="Bold" />
+                <TextBlock Text="先设节数，再填每节起止时刻（HH:mm），整体保存；保存后课表页与空闲统计页即时刷新"
+                           TextWrapping="Wrap"
+                           Margin="0,6,0,6"
+                           Foreground="{DynamicResource App.Brush.TextMuted}" />
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="每天节数" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <TextBox Text="{Binding PeriodCountText, UpdateSourceTrigger=PropertyChanged}" Width="50" />
+                    <Button Content="应用节数"
+                            Command="{Binding ApplyPeriodCountCommand}"
+                            Padding="12,4"
+                            Margin="10,0,0,0"
+                            ToolTip="按新节数增删作息行（最少 4 节，最多 24 节）" />
+                    <TextBlock Text="{Binding PeriodCountHint}"
+                               VerticalAlignment="Center"
+                               Margin="12,0,0,0"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource App.Brush.TextMuted}" />
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding PeriodRows}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="2" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0,2,16,2">
+                                <TextBlock Text="{Binding PeriodLabel}" Width="62" VerticalAlignment="Center" />
+                                <TextBox Text="{Binding StartText, UpdateSourceTrigger=PropertyChanged}" Width="62" />
+                                <TextBlock Text="—" VerticalAlignment="Center" Margin="6,0" />
+                                <TextBox Text="{Binding EndText, UpdateSourceTrigger=PropertyChanged}" Width="62" />
+                                <TextBlock Text="{Binding Error}"
+                                           VerticalAlignment="Center"
+                                           Margin="8,0,0,0"
+                                           Foreground="{DynamicResource App.Brush.ErrorText}"
+                                           TextTrimming="CharacterEllipsis"
+                                           MaxWidth="180" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <Button Content="保存作息时间" Command="{Binding SavePeriodTimesCommand}" Padding="12,4" />
+                    <TextBlock Text="{Binding PeriodStatusMessage}"
+                               VerticalAlignment="Center"
+                               Margin="12,0,0,0"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource App.Brush.TextMuted}" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- 外观 -->
+            <StackPanel Margin="0,16,0,16">
+                <TextBlock Text="外观" FontWeight="Bold" />
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <TextBlock Text="主题" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <ComboBox ItemsSource="{Binding ThemeOptions}"
+                              SelectedItem="{Binding SelectedTheme}"
+                              MinWidth="110" />
+                    <TextBlock Text="{Binding ThemeHint}"
+                               VerticalAlignment="Center"
+                               Margin="12,0,0,0"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource App.Brush.TextMuted}" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,9 @@
+班级工作台
+Copyright 2026 徐明哲、Bai
+
+本产品采用 Apache License 2.0 开源（全文见 LICENSE）。
+
+第三方组件（均为 MIT 许可，随 NuGet 包分发，各自版权归原作者所有）：
+  ClosedXML、Docnet.Core（含 PDFium）、CommunityToolkit.Mvvm、
+  Microsoft.EntityFrameworkCore(.Sqlite)、Microsoft.Extensions.DependencyInjection、
+  System.Text.Encoding.CodePages

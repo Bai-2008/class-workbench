@@ -1,0 +1,8 @@
+# 构建产物
+bin/
+obj/
+
+# 运行时数据（SQLite 数据库、WAL 日志、用户设置）
+# 必须写 /data/ 锚定到仓库根：Windows 上 git 默认大小写不敏感，
+# 写成 data/ 会连 ClassScheduleApp/Data/（C# 数据层源码）一起忽略掉。
+/data/

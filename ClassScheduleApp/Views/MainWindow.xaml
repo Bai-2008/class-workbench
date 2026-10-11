@@ -1,0 +1,107 @@
+<Window x:Class="ClassScheduleApp.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:ClassScheduleApp.ViewModels"
+        xmlns:views="clr-namespace:ClassScheduleApp.Views"
+        mc:Ignorable="d"
+        Title="班级工作台" Height="720" Width="1200">
+    <Window.Resources>
+        <!-- ViewModel-first：内容区直接承载 ViewModel 实例，这里按 DataType 隐式选 View。
+             View 的 DataContext 由模板继承（即对应 ViewModel），构造函数零注入、后台零逻辑。
+             新增模块时在此追加一条 DataTemplate（见 .dsh/skills/wpf-mvvm-conventions.md 的新模块接入清单）。 -->
+        <DataTemplate DataType="{x:Type vm:StudentScheduleViewModel}">
+            <views:StudentSchedulePage />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+            <views:SettingsPage />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:FreeTimeStatsViewModel}">
+            <views:FreeTimeStatsPage />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AttendanceViewModel}">
+            <views:AttendancePage />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ClassFundsViewModel}">
+            <views:ClassFundsPage />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScoreEntryViewModel}">
+            <views:ScoreEntryPage />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScheduleAdjustmentViewModel}">
+            <views:ScheduleAdjustmentPage />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScheduleImportViewModel}">
+            <views:ScheduleImportPage />
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- 左侧窄导航栏 -->
+        <DockPanel Grid.Column="0" Margin="12">
+            <TextBlock DockPanel.Dock="Top"
+                       Text="班级工作台"
+                       FontWeight="Bold"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,12" />
+
+            <ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding VisibleModules}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button HorizontalContentAlignment="Left"
+                                Padding="8,6"
+                                Margin="0,0,0,4"
+                                Command="{Binding DataContext.SelectModuleCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{Binding IconPath}"
+                                      Stroke="DimGray"
+                                      StrokeThickness="1.4"
+                                      Width="18"
+                                      Height="18"
+                                      Stretch="Uniform"
+                                      VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding DisplayName}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- 固定在最底部的设置入口 -->
+            <Button DockPanel.Dock="Bottom"
+                    HorizontalContentAlignment="Left"
+                    Padding="8,6"
+                    Command="{Binding SelectModuleCommand}"
+                    CommandParameter="{Binding SettingsModule}">
+                <StackPanel Orientation="Horizontal">
+                    <Path Data="{Binding SettingsModule.IconPath}"
+                          Stroke="DimGray"
+                          StrokeThickness="1.4"
+                          Width="18"
+                          Height="18"
+                          Stretch="Uniform"
+                          VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding SettingsModule.DisplayName}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+
+            <Border />
+        </DockPanel>
+
+        <!-- 右侧内容区：直接承载当前模块的 ViewModel -->
+        <DockPanel Grid.Column="1" Margin="0,12,12,12">
+            <TextBlock DockPanel.Dock="Top"
+                       Text="{Binding CurrentModule.DisplayName}"
+                       FontWeight="Bold"
+                       Margin="0,0,0,10" />
+            <ContentControl Content="{Binding CurrentViewModel}" />
+        </DockPanel>
+    </Grid>
+</Window>

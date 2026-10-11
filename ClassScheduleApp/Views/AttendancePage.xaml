@@ -1,0 +1,162 @@
+<UserControl x:Class="ClassScheduleApp.Views.AttendancePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <!-- 考勤管理页：DataContext 由隐式模板继承为 AttendanceViewModel，后台零逻辑 -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TabControl Grid.Row="0">
+            <!-- 标签页一：考勤登记 -->
+            <TabItem Header="考勤登记">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="日期" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <DatePicker SelectedDate="{Binding RegistrationDate}" Width="140" />
+                        <TextBlock Text="场合" VerticalAlignment="Center" Margin="16,0,6,0" />
+                        <ComboBox ItemsSource="{Binding Occasions}"
+                                  SelectedItem="{Binding SelectedOccasion}"
+                                  MinWidth="200">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding DisplayText}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock Text="{Binding DayHint}"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0,0,0"
+                                   MaxWidth="380"
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource App.Brush.TextMuted}" />
+                        <Button Content="全员出勤"
+                                Command="{Binding MarkAllPresentCommand}"
+                                Padding="12,4"
+                                Margin="16,0,8,0" />
+                        <Button Content="保存"
+                                Command="{Binding SaveRegistrationCommand}"
+                                Padding="12,4" />
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Rows}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              SelectionMode="Single"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="学号" Binding="{Binding StudentNo}" Width="110" />
+                            <DataGridTextColumn Header="姓名" Binding="{Binding Name}" Width="110" />
+                            <DataGridTemplateColumn Header="状态" Width="340">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <!-- IsChecked 只做单向显示，状态切换由命令驱动（RadioButton 不会回写绑定源） -->
+                                            <RadioButton Content="出勤"
+                                                         GroupName="{Binding GroupName}"
+                                                         IsChecked="{Binding IsPresent, Mode=OneWay}"
+                                                         Command="{Binding SetPresentCommand}"
+                                                         Margin="0,0,14,0" />
+                                            <RadioButton Content="迟到"
+                                                         GroupName="{Binding GroupName}"
+                                                         IsChecked="{Binding IsLate, Mode=OneWay}"
+                                                         Command="{Binding SetLateCommand}"
+                                                         Margin="0,0,14,0" />
+                                            <RadioButton Content="旷课"
+                                                         GroupName="{Binding GroupName}"
+                                                         IsChecked="{Binding IsAbsent, Mode=OneWay}"
+                                                         Command="{Binding SetAbsentCommand}"
+                                                         Margin="0,0,14,0" />
+                                            <RadioButton Content="请假"
+                                                         GroupName="{Binding GroupName}"
+                                                         IsChecked="{Binding IsLeave, Mode=OneWay}"
+                                                         Command="{Binding SetLeaveCommand}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="备注" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}"
+                                                 BorderThickness="0" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- 标签页二：统计 -->
+            <TabItem Header="统计">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="起" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <DatePicker SelectedDate="{Binding StatsStart}" Width="140" />
+                        <TextBlock Text="止" VerticalAlignment="Center" Margin="12,0,6,0" />
+                        <DatePicker SelectedDate="{Binding StatsEnd}" Width="140" />
+                        <TextBlock Text="课程" VerticalAlignment="Center" Margin="16,0,6,0" />
+                        <ComboBox ItemsSource="{Binding CourseFilters}"
+                                  SelectedItem="{Binding SelectedCourseFilter}"
+                                  MinWidth="180">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding DisplayText}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Button Content="导出统计"
+                                Command="{Binding ExportStatsCommand}"
+                                Padding="12,4"
+                                Margin="16,0,0,0" />
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding StudentStats}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              SelectionMode="Single"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="姓名" Binding="{Binding StudentName}" Width="120" />
+                            <DataGridTextColumn Header="学号" Binding="{Binding StudentNo}" Width="120" />
+                            <DataGridTextColumn Header="出勤" Binding="{Binding PresentCount}" Width="80" />
+                            <DataGridTextColumn Header="迟到" Binding="{Binding LateCount}" Width="80" />
+                            <DataGridTextColumn Header="旷课" Binding="{Binding AbsentCount}" Width="80" />
+                            <DataGridTextColumn Header="请假" Binding="{Binding LeaveCount}" Width="80" />
+                            <DataGridTextColumn Header="出勤率" Binding="{Binding AttendanceRateText}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <TextBlock Grid.Row="1"
+                   Text="{Binding StatusMessage}"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource App.Brush.TextMuted}"
+                   Margin="0,10,0,0" />
+    </Grid>
+</UserControl>
